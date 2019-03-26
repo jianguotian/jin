@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      Metastore Thrift服务端解析
-subtitle:   函数式编程框架 ReactiveCocoa 进阶
+title:      Metastore解析
+subtitle:   Thrift服务端解析
 date:       2019-02-26
 author:     jianguotian
 header-img: img/post-bg-ios9-web.jpg
@@ -12,19 +12,20 @@ tags:
     - DataNucleus
     - JDO
 ---
+
 ![Metastore Internal](https://upload-images.jianshu.io/upload_images/7440793-42f2711a226843a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-######1、HiveMetastore
-&emsp;HiveMetastore是Metastore的Thrift程序，Thrift文件为hive_metastore.thrift，Thrift服务接口文件为ThriftHiveMetastore.java。
-&emsp;首先，要理解Thrift服务模型和概念，对应服务模型，再理解下面的Metastore Thrift服务逻辑。
+## HiveMetastore
+HiveMetastore是Metastore的Thrift程序，Thrift文件为hive_metastore.thrift，Thrift服务接口文件为ThriftHiveMetastore.java。
+首先，要理解Thrift服务模型和概念，对应服务模型，再理解下面的Metastore Thrift服务逻辑。
 ![Thrift通信协议栈](https://upload-images.jianshu.io/upload_images/7440793-5cfe0ea5fcee6f82.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 Thrift协议栈简介：
-1）底层IO模块，负责实际的数据传输，包括Socket，文件，或者压缩数据流等。
-2）TTransport负责以字节流方式发送和接收Message，是底层IO模块在Thrift框架中的实现，每一个底层IO模块都会有一个对应TTransport来负责Thrift的字节流(Byte Stream)数据在该IO模块上的传输。例如TSocket对应Socket传输，TFileTransport对应文件传输。
-3）TProtocol主要负责结构化数据组装成Message，或者从Message结构中读出结构化数据。TProtocol将一个有类型的数据转化为字节流以交给TTransport进行传输，或者从TTransport中读取一定长度的字节数据转化为特定类型的数据。如int32会被TBinaryProtocol Encode为一个四字节的字节数据，或者TBinaryProtocol从TTransport中取出四个字节的数据Decode为int32。
-4）TServer负责接收Client的请求，并将请求转发到Processor进行处理。TServer主要任务就是高效的接受Client的请求，特别是在高并发请求的情况下快速完成请求。
-5）Processor(或者TProcessor)负责对Client的请求做出相应，包括RPC请求转发，调用参数解析和用户逻辑调用，返回值写回等处理步骤。Processor是服务器端从Thrift框架转入用户逻辑的关键流程。Processor同时也负责向Message结构中写入数据或者读出数据。
+- **底层IO模块**：负责实际的数据传输，包括Socket，文件，或者压缩数据流等。
+- **TTransport**：负责以字节流方式发送和接收Message，是底层IO模块在Thrift框架中的实现，每一个底层IO模块都会有一个对应TTransport来负责Thrift的字节流(Byte Stream)数据在该IO模块上的传输。例如TSocket对应Socket传输，TFileTransport对应文件传输。
+- **TProtocol**：主要负责结构化数据组装成Message，或者从Message结构中读出结构化数据。TProtocol将一个有类型的数据转化为字节流以交给TTransport进行传输，或者从TTransport中读取一定长度的字节数据转化为特定类型的数据。如int32会被TBinaryProtocol Encode为一个四字节的字节数据，或者TBinaryProtocol从TTransport中取出四个字节的数据Decode为int32。
+- **TServer**：负责接收Client的请求，并将请求转发到Processor进行处理。TServer主要任务就是高效的接受Client的请求，特别是在高并发请求的情况下快速完成请求。
+- **Processor(或者TProcessor)**：负责对Client的请求做出相应，包括RPC请求转发，调用参数解析和用户逻辑调用，返回值写回等处理步骤。Processor是服务器端从Thrift框架转入用户逻辑的关键流程。Processor同时也负责向Message结构中写入数据或者读出数据。
 &emsp;注意下面代码中将handler封装进processor，我的理解handler是metastore服务逻辑核Thrift服务模型的一个桥梁。
-```
+```java
   public static void startMetaStore(int port, HadoopThriftAuthBridge bridge,
       HiveConf conf, Lock startLock, Condition startCondition,
       AtomicBoolean startedServing) throws Throwable {
@@ -92,11 +93,11 @@ Thrift协议栈简介：
       ......
     }
 ```
-######2、HMSHandler
-&emsp;HMSHandler实现了IMSHandler的接口，是HiveMetastore的内部类，它定义了对元数据操作和获取信息的各种方法，如下图所示。
+## HMSHandler
+HMSHandler实现了IMSHandler的接口，是HiveMetastore的内部类，它定义了对元数据操作和获取信息的各种方法，如下图所示。
 ![HMSHandler方法](https://upload-images.jianshu.io/upload_images/7440793-3f560286466f9ff0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-&emsp;通过动态代理的方式调用HMSHandler的各种方法。动态代理类为RetryingHMSHandler。
-```
+通过动态代理的方式调用HMSHandler的各种方法。动态代理类为RetryingHMSHandler。
+```java
   public static IHMSHandler getProxy(HiveConf hiveConf, IHMSHandler baseHandler, boolean local)
       throws MetaException {
 
@@ -107,11 +108,11 @@ Thrift协议栈简介：
       new Class[] { IHMSHandler.class }, handler);
   }
 ```
-######3、ObjectStore
+## ObjectStore
 &emsp;该类是应用程序逻辑与包含对象的database store之间的接口，定义了操作元数据表的各种方法，如下图所示（上文中HMSHandler也定义了操作元数据表的各种方法，实际上最终会调用ObjectStore中的方法）。
 ![ObjectStore](https://upload-images.jianshu.io/upload_images/7440793-27ff244c3e0e642c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-&emsp;ObjectStore是RawStore的实现类，通过动态代理的方式调用ObjectStore的各种方法。动态代理类为RawStoreProxy。
-```
+ObjectStore是RawStore的实现类，通过动态代理的方式调用ObjectStore的各种方法。动态代理类为RawStoreProxy。
+```java
   public static RawStore getProxy(HiveConf hiveConf, Configuration conf, String rawStoreClassName,
       int id) throws MetaException {
 
@@ -124,15 +125,15 @@ Thrift协议栈简介：
         getAllInterfaces(baseClass), handler);
   }
 ```
-######4、DataNucleus
-&emsp;DataNucleus实现了JDO规范，JDO(Java Data Object )是Java对象持久化的规范。了解Hibernate或者MyBatis的同学，对于对象持久化或者ORM（Object Relational Mapping，对象关系映射）应该不会陌生。DataNucleus做的正是这样的事情。
-&emsp;Metastore中实现DataNucleus比较直观的两部分是M*类和package.jdo，package.jdo定义了对象和元数据表的映射，M*类则表示映射元数据表的类。详细内容如下图。
-1）M* model类
+## DataNucleus
+DataNucleus实现了JDO规范，JDO(Java Data Object )是Java对象持久化的规范。了解Hibernate或者MyBatis的同学，对于对象持久化或者ORM（Object Relational Mapping，对象关系映射）应该不会陌生。DataNucleus做的正是这样的事情。
+Metastore中实现DataNucleus比较直观的两部分是M*类和package.jdo，package.jdo定义了对象和元数据表的映射，M*类则表示映射元数据表的类。详细内容如下图。
+- ### M* model类
 ![M*](https://upload-images.jianshu.io/upload_images/7440793-fc21f48bfffe2b83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![Mdatabase类示意](https://upload-images.jianshu.io/upload_images/7440793-036c2c550229f893.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-2）package.jdo
-&emsp;如下图所示，DBS是MySQL元数据中的一张表，MDatabase则表示对应的model类，MDatabase同样定义了相应的属性和方法。
+- ### package.jdo
+如下图所示，DBS是MySQL元数据中的一张表，MDatabase则表示对应的model类，MDatabase同样定义了相应的属性和方法。
 ![package.jdo](https://upload-images.jianshu.io/upload_images/7440793-be8140d5789cf379.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-######4、MySQL元数据示例
+## MySQL元数据示例
 ![MySQL中元数据表](https://upload-images.jianshu.io/upload_images/7440793-9bc120e64d25fd87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![DBS元数据表](https://upload-images.jianshu.io/upload_images/7440793-6ad93cd27d5bc06e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
