@@ -1,9 +1,9 @@
 # Site settings
 title: JimmyTian Blog
-SEOTitle: 田建国的博客 | JimmyTian Blog
+SEOTitle: JimmyTian Blog
 header-img: img/post-bg-desk.jpg
 email: jianguotian2010@163.com
-description: "Every failure is leading towards success."
+description: ""
 keyword: "Hadoop, Hive, Spark, Presto, 大数据"
 url: "http://jianguotian.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
@@ -11,7 +11,7 @@ github_repo: https://github.com/jianguotian" # you code repository
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-#sidebar-about-description: "Goals determine what you going to be!"
+#sidebar-about-description: ""
 sidebar-avatar: /img/sanjing.png      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
@@ -62,11 +62,11 @@ kramdown:
 # Gitalk
 gitalk:
   enable: true    #是否开启Gitalk评论
-  clientID: f2c84e7629bb1446c1a4                            #生成的clientID
-  clientSecret: ca6d6139d1e1b8c43f8b2e19492ddcac8b322d0d    #生成的clientSecret
-  repo: qiubaiying.github.io    #仓库名称
-  owner: qiubaiying    #github用户名
-  admin: qiubaiying
+  clientID: 5fb9babd126ee2c2fd5d                            #生成的clientID
+  clientSecret: 916c042e02f3f217895ecdf4bf663910cad7996b    #生成的clientSecret
+  repo: jianguotian.github.io    #仓库名称
+  owner: jianguotian    #github用户名
+  admin: jianguotian
   distractionFreeMode: true #是否启用类似FB的阴影遮罩
 
 
