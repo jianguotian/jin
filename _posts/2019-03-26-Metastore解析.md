@@ -7,6 +7,7 @@ author:     jianguotian
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
 tags:
+	- 原创
     - Metastore
     - Thrift服务
     - DataNucleus

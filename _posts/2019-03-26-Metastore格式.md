@@ -7,6 +7,7 @@ author:     jianguotian
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
 tags:
+	- 原创
     - Metastore
     - INPUTFORMAT/OUTPUTFORMAT
     - SerDe
@@ -22,7 +23,7 @@ https://cwiki.apache.org/confluence/display/Hive/FileFormats
 Hive向HDFS写入文件时，顺序相反。大体流程如下所示：
 HDFS files --> InputFileFormat --> Deserializer --> Row object --> Serializer --> OutputFileFormat --> HDFS files
 ![Hive读写记录](https://upload-images.jianshu.io/upload_images/7440793-bd3cb5c8c71f65e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-## INPUTFORMAT/OUTPUTFORMAT
+### INPUTFORMAT/OUTPUTFORMAT
 通常，Hive中的建表语句如下：
 ```sql
 CREATE TABLE my_table(a string, b string, ...)
@@ -40,7 +41,7 @@ STORED AS TEXTFILE;
 ![Hive数据表](https://upload-images.jianshu.io/upload_images/7440793-107796043c0fc80e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 INPUTFORMAT/OUTPUTFORMAT对应创建表时的STORED AS语句，如果自定义编写的INPUTFORMAT/OUTPUTFORMAT，在创建表时可以写成STORED AS INPUTFORMAT '<packagepath.classname>' OUTPUTFORMAT '<packagepath.classname>' 的形式。
 Hive中支持的format参照 https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-StorageFormats
-## SerDes 
+### SerDes 
 官方wiki https://cwiki.apache.org/confluence/display/Hive/SerDe
 TEXTFILE格式使用默认的SerDe，LazySimpleSerDe。
 Hive中支持的SerDe参照 https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-RowFormats&SerDe
