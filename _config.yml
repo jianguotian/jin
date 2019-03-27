@@ -1,10 +1,10 @@
 # Site settings
 title: JimmyTian Blog
-SEOTitle: JimmyTian Blog
+SEOTitle: 田建国的博客
 header-img: img/luguhu.jpg
 email: jianguotian2010@163.com
 description: ""
-keyword: "Hadoop, Hive, Spark, Presto, 大数据"
+keyword: ""
 url: "http://jianguotian.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 github_repo: https://github.com/jianguotian" # you code repository
