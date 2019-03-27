@@ -14,7 +14,7 @@ tags:
 ---
 
 ![Metastore Internal](https://upload-images.jianshu.io/upload_images/7440793-42f2711a226843a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-## HiveMetastore
+### HiveMetastore
 HiveMetastore是Metastore的Thrift程序，Thrift文件为hive_metastore.thrift，Thrift服务接口文件为ThriftHiveMetastore.java。
 首先，要理解Thrift服务模型和概念，对应服务模型，再理解下面的Metastore Thrift服务逻辑。
 ![Thrift通信协议栈](https://upload-images.jianshu.io/upload_images/7440793-5cfe0ea5fcee6f82.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -93,7 +93,7 @@ Thrift协议栈简介：
       ......
     }
 ```
-## HMSHandler
+### HMSHandler
 HMSHandler实现了IMSHandler的接口，是HiveMetastore的内部类，它定义了对元数据操作和获取信息的各种方法，如下图所示。
 ![HMSHandler方法](https://upload-images.jianshu.io/upload_images/7440793-3f560286466f9ff0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 通过动态代理的方式调用HMSHandler的各种方法。动态代理类为RetryingHMSHandler。
@@ -108,7 +108,7 @@ HMSHandler实现了IMSHandler的接口，是HiveMetastore的内部类，它定�
       new Class[] { IHMSHandler.class }, handler);
   }
 ```
-## ObjectStore
+### ObjectStore
 该类是应用程序逻辑与包含对象的database store之间的接口，定义了操作元数据表的各种方法，如下图所示（上文中HMSHandler也定义了操作元数据表的各种方法，实际上最终会调用ObjectStore中的方法）。
 ![ObjectStore](https://upload-images.jianshu.io/upload_images/7440793-27ff244c3e0e642c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ObjectStore是RawStore的实现类，通过动态代理的方式调用ObjectStore的各种方法。动态代理类为RawStoreProxy。
@@ -125,15 +125,15 @@ ObjectStore是RawStore的实现类，通过动态代理的方式调用ObjectStor
         getAllInterfaces(baseClass), handler);
   }
 ```
-## DataNucleus
+### DataNucleus
 DataNucleus实现了JDO规范，JDO(Java Data Object )是Java对象持久化的规范。了解Hibernate或者MyBatis的同学，对于对象持久化或者ORM（Object Relational Mapping，对象关系映射）应该不会陌生。DataNucleus做的正是这样的事情。
 Metastore中实现DataNucleus比较直观的两部分是M*类和package.jdo，package.jdo定义了对象和元数据表的映射，M*类则表示映射元数据表的类。详细内容如下图。
-### M* model类
+#### M* model类
 ![M*](https://upload-images.jianshu.io/upload_images/7440793-fc21f48bfffe2b83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![Mdatabase类示意](https://upload-images.jianshu.io/upload_images/7440793-036c2c550229f893.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-### package.jdo
+#### package.jdo
 如下图所示，DBS是MySQL元数据中的一张表，MDatabase则表示对应的model类，MDatabase同样定义了相应的属性和方法。
 ![package.jdo](https://upload-images.jianshu.io/upload_images/7440793-be8140d5789cf379.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-## MySQL元数据示例
+### MySQL元数据示例
 ![MySQL中元数据表](https://upload-images.jianshu.io/upload_images/7440793-9bc120e64d25fd87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![DBS元数据表](https://upload-images.jianshu.io/upload_images/7440793-6ad93cd27d5bc06e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
