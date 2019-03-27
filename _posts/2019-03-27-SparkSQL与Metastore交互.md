@@ -11,8 +11,8 @@ tags:
     - Metastore
     - SessionCatalog
     - ExternalCatalog
-	- IsolatedClientLoader
-	- HiveClientImpl
+    - IsolatedClientLoader
+    - HiveClientImpl
 ---
 
 ### 示例代码
