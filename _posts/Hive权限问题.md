@@ -15,10 +15,10 @@ CDH5.12.1+Hadoop2.6+Hive1.1.0
 insert overwrite/into XX select * from XX
 HDFS目录权限规范表级目录权限为770，手动创建；分区目录权限为755(umask值为022)。
 设置Hive权限继承参数hive.warehouse.subdir.inherit.perms=false无效
-![](../../img/20191229/问题说明.jpg)
+![](../img/20191229/问题说明.jpg)
 官方说明：
 https://cwiki.apache.org/confluence/display/Hive/Permission+Inheritance+in+Hive
-![](../../img/20191229/权限继承参数说明.jpg)
+![](../img/20191229/权限继承参数说明.jpg)
 ###问题2：删除分区报错
 SQL：  
 alter table srcpart drop partition(key='2008-04-08');  
